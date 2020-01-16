@@ -1,43 +1,80 @@
 //sets container and draws default 4x4 grid
 const container = document.getElementById('grid-container');
-setDefaultGrid();
+let currentColor = 'pink';
+
+drawGrid(4);
+colorCell(currentColor);
 
 //loads clear button and sets event listener
 const clearBtn = document.getElementById('clear-btn');
-clearBtn.addEventListener('click', setNewGrid);
+clearBtn.addEventListener('click', clearGrid);
 
-//draws default 4x4 grid
-function setDefaultGrid() {
-    container.style.gridTemplateColumns = ('repeat(' + 4 + ', 1fr)'); 
-    
-    for (var i=0; i<16; i++)  {
-            let gridCell = document.createElement('div');
-            gridCell.className = 'grid-cell';
-            container.appendChild(gridCell);
-            gridCell.addEventListener('mouseenter', () => gridCell.className = 'grid-cell selected');
-        }
-    }
+const resizeBtn = document.getElementById('resize-btn');
+resizeBtn.addEventListener('click', () => {
+    let gridSize = prompt("How many cells per side would you like?");
+     drawGrid(gridSize) 
+        
+});
+
+const colorBtn = document.getElementById('color-btn');
+colorBtn.addEventListener('click', () => {
+    currentColor = prompt('Pick a new pen color');
+    colorCell(currentColor);
+})
+
+const randomBtn = document.getElementById('random-btn');
+randomBtn.addEventListener('click', () => {
+    currentColor = randomColor();
+    colorCell(currentColor);
+})
 
 //draws new user-defined grid
-function setNewGrid()
+function drawGrid(gridSize)
 {
-    clearGrid();
-    let gridSize = prompt('How many squares per side would you like?');
-    
+    deletePreviousGrid();
     for (var i=0; i<parseInt(gridSize**2); i++) 
     {
+        console.log(gridSize**2);
         let gridCell = document.createElement('div');
         gridCell.className = 'grid-cell';
         container.appendChild(gridCell);
-        gridCell.addEventListener('mouseenter', () => gridCell.className = 'grid-cell selected');
     }
     //dynamically sets up new grid size
     container.style.gridTemplateColumns = ('repeat(' + gridSize + ', 1fr)'); 
+    colorCell(currentColor);
 }
 
-//clears existing grid
+//clears existing grid and resets cells back to white
 function clearGrid() {
+    let gridCells = document.querySelectorAll('.grid-cell');
+    gridCells.forEach(cell => {
+        cell.style.backgroundColor = 'white';
+    });
+}
+
+function deletePreviousGrid() {
+    console.log('In the delete grid function');
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
 }
+
+function colorCell(color) {
+    let gridCells = document.querySelectorAll('.grid-cell');
+    gridCells.forEach(cell => {
+        cell.addEventListener("mouseenter", () => {
+            cell.style.backgroundColor = color;
+        });
+    });
+}
+
+//deletes existing grid (to allow new one to be built)
+
+function randomColor() {
+  let num = Math.round(0xffffff * Math.random());
+  let r = num >> 16;
+  let g = num >> 8 & 255;
+  let b = num & 255;
+  return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+}
+
