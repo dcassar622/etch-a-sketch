@@ -5,15 +5,16 @@ let currentColor = 'pink';
 drawGrid(4);
 colorCell(currentColor);
 
-//loads clear button and sets event listener
+//load buttons and set relevant actions
 const clearBtn = document.getElementById('clear-btn');
 clearBtn.addEventListener('click', clearGrid);
 
 const resizeBtn = document.getElementById('resize-btn');
 resizeBtn.addEventListener('click', () => {
     let gridSize = prompt("How many cells per side would you like?");
+    if (gridSize !== null) {
      drawGrid(gridSize) 
-        
+    }    
 });
 
 const colorBtn = document.getElementById('color-btn');
@@ -23,20 +24,24 @@ colorBtn.addEventListener('click', () => {
 })
 
 const randomBtn = document.getElementById('random-btn');
-randomBtn.addEventListener('click', () => {
-    currentColor = randomColor();
-    colorCell(currentColor);
-})
+randomBtn.addEventListener('click', () => { 
+    let gridCells = document.querySelectorAll('.grid-cell');
+    gridCells.forEach(cell => {
+        cell.addEventListener("mouseenter", () => {
+            randomColorCell(cell, randomColor());
+        });
+    });
+});
 
 //draws new user-defined grid
 function drawGrid(gridSize)
 {
     deletePreviousGrid();
-    for (var i=0; i<parseInt(gridSize**2); i++) 
-    {
+    for (var i=0; i<parseInt(gridSize**2); i++) {
         console.log(gridSize**2);
         let gridCell = document.createElement('div');
         gridCell.className = 'grid-cell';
+        gridCell.style.backgroundColor = 'white';
         container.appendChild(gridCell);
     }
     //dynamically sets up new grid size
@@ -52,6 +57,7 @@ function clearGrid() {
     });
 }
 
+//deletes divs(cells) related to previous grid
 function deletePreviousGrid() {
     console.log('In the delete grid function');
     while (container.firstChild) {
@@ -59,6 +65,7 @@ function deletePreviousGrid() {
     }
 }
 
+//fills each cell with user-defined color
 function colorCell(color) {
     let gridCells = document.querySelectorAll('.grid-cell');
     gridCells.forEach(cell => {
@@ -68,13 +75,18 @@ function colorCell(color) {
     });
 }
 
-//deletes existing grid (to allow new one to be built)
+//fills each cell with a different color
+function randomColorCell(cell, color) {
+    cell.style.backgroundColor = color;
+}
 
+//generates random color
 function randomColor() {
   let num = Math.round(0xffffff * Math.random());
   let r = num >> 16;
   let g = num >> 8 & 255;
   let b = num & 255;
-  return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  color = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  return color;
 }
 
